@@ -1,0 +1,87 @@
+{
+  "name": "delivery-vel",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "dev:web": "ng serve web --port 4200",
+    "dev:admin": "ng serve admin --port 4201",
+    "build:web": "ng build web",
+    "build:admin": "ng build admin",
+    "build:libs": "ng build ui && ng build data && ng build features && ng build utils && ng build mocks",
+    "build": "npm run build:libs && npm run build:web && npm run build:admin",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:web": "ng test web",
+    "test:admin": "ng test admin",
+    "test:libs": "ng test ui && ng test data && ng test features && ng test utils && ng test mocks",
+    "lint": "ng lint",
+    "e2e": "playwright test",
+    "mock": "json-server --watch libs/mocks/src/db.json --port 3000",
+    "start": "concurrently \"npm run mock\" \"npm run dev:web\"",
+    "pwa:build": "ng build web --configuration production",
+    "lighthouse": "lhci autorun"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.1.0",
+    "@angular/cdk": "^20.1.0",
+    "@angular/common": "^20.1.0",
+    "@angular/compiler": "^20.1.0",
+    "@angular/core": "^20.1.0",
+    "@angular/forms": "^20.1.0",
+    "@angular/material": "^20.1.0",
+    "@angular/platform-browser": "^20.1.0",
+    "@angular/platform-browser-dynamic": "^20.1.0",
+    "@angular/router": "^20.1.0",
+    "@angular/service-worker": "^20.1.0",
+    "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
+    "dexie": "^4.0.8",
+    "leaflet": "^1.9.4",
+    "qrcode": "^1.5.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.1.4",
+    "@angular/cli": "^20.1.4",
+    "@angular/compiler-cli": "^20.1.0",
+    "@lhci/cli": "^0.14.0",
+    "@playwright/test": "^1.49.1",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@types/crypto-js": "^4.2.2",
+    "@types/jasmine": "~5.1.0",
+    "@types/leaflet": "^1.9.14",
+    "@types/qrcode": "^1.5.5",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.18.0",
+    "jasmine-core": "~5.8.0",
+    "jest": "^29.7.0",
+    "json-server": "^1.0.0-beta.3",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^20.1.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.2"
+  }
+}
