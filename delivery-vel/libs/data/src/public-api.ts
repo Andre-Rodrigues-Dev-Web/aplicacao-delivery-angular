@@ -5,19 +5,15 @@
 // Services
 export * from './lib/services/auth.service';
 export * from './lib/services/product.service';
-export * from './lib/services/cart.service';
-export * from './lib/services/order.service';
-export * from './lib/services/user.service';
-export * from './lib/services/category.service';
-export * from './lib/services/coupon.service';
-export * from './lib/services/delivery.service';
-export * from './lib/services/notification.service';
 export * from './lib/services/storage.service';
-export * from './lib/services/geolocation.service';
 
 // Models
 export * from './lib/models/user.model';
 export * from './lib/models/product.model';
+export * from './lib/models/address.model';
+
+// Enums
+export * from './lib/enums/user-role.enum';
 export * from './lib/models/cart.model';
 export * from './lib/models/order.model';
 export * from './lib/models/category.model';
