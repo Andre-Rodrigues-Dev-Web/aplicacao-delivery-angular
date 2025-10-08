@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@delivery-vel/data';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { AuthService, UserRole } from '@delivery-vel/data';
 
 @Component({
   selector: 'app-login',
@@ -80,6 +80,7 @@ import { AuthService } from '@delivery-vel/data';
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
+                [(ngModel)]="rememberMe"
                 class="h-4 w-4 text-brand-red focus:ring-brand-red border-neutral-300 rounded"
               />
               <label for="remember-me" class="ml-2 block text-sm text-neutral-900">
@@ -93,6 +94,24 @@ import { AuthService } from '@delivery-vel/data';
               </a>
             </div>
           </div>
+
+          @if (errorMessage()) {
+            <div class="rounded-md bg-red-50 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <span class="text-red-400">⚠️</span>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">
+                    Erro no login
+                  </h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <p>{{ errorMessage() }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
 
           <div>
             <button
@@ -163,7 +182,8 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   togglePasswordVisibility(): void {
@@ -176,19 +196,43 @@ export class LoginComponent {
     this._isLoading.set(true);
     this._errorMessage.set('');
 
+    console.log('=== LOGIN DEBUG ===');
+    console.log('Tentando login com:', { email: this.credentials.email, password: '***' });
+
     this.authService.login({ email: this.credentials.email, password: this.credentials.password, rememberMe: this.rememberMe })
       .subscribe({
         next: (response) => {
           this._isLoading.set(false);
-          // Login realizado com sucesso - redirecionar para home
           
-          // Redirecionar para a página inicial ou página anterior
-          this.router.navigate(['/']);
+          console.log('✅ Login bem-sucedido:', response);
+          console.log('Papel do usuário:', response.user.role);
+          console.log('Enum UserRole.ADMIN:', UserRole.ADMIN);
+          console.log('É admin?', response.user.role === UserRole.ADMIN);
+          
+          // Verificar se há uma URL de retorno nos query parameters
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          console.log('Return URL:', returnUrl);
+          
+          // Se o usuário é admin, sempre redirecionar para admin
+          if (response.user.role === UserRole.ADMIN) {
+            console.log('🔧 Usuário é admin, redirecionando para /admin');
+            console.log('Navegando para /admin...');
+            this.router.navigate(['/admin']).then(success => {
+              console.log('Navegação para /admin resultado:', success);
+              if (!success) {
+                console.error('❌ Falha na navegação para /admin');
+              }
+            });
+          } else {
+            console.log('👤 Usuário não é admin, redirecionando para:', returnUrl === '/' ? '/home' : returnUrl);
+            // Para usuários não-admin, redirecionar para home ou URL específica
+            this.router.navigate([returnUrl === '/' ? '/home' : returnUrl]);
+          }
         },
         error: (error) => {
           this._isLoading.set(false);
           this._errorMessage.set(error.message || 'Erro ao fazer login. Tente novamente.');
-          console.error('Erro no login:', error);
+          console.error('❌ Erro no login:', error);
         }
       });
   }

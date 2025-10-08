@@ -26,9 +26,6 @@ import { ProductService, Product, ProductCategory, ProductListResponse, CartServ
               >
                 Ver Cardápio
               </a>
-              <button class="border-2 border-neutral-900 text-neutral-900 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-neutral-900 hover:text-brand-lime transition-colors">
-                Baixar App
-              </button>
             </div>
           </div>
         </div>

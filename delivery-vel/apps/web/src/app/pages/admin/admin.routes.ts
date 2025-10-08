@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from '../../guards/admin.guard';
 
 export const adminRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [adminGuard],
     children: [
       {
         path: '',
@@ -24,7 +26,7 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'inventory',
-        loadComponent: () => import('./inventory/inventory.component').then(m => m.InventoryComponent)
+        loadComponent: () => import('./inventory/inventory.component').then(m => m.AdminInventoryComponent)
       },
       {
         path: 'chat',
@@ -32,11 +34,11 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'reports',
-        loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
+        loadComponent: () => import('./reports/reports.component').then(m => m.AdminReportsComponent)
       },
       {
         path: 'employees',
-        loadComponent: () => import('./employees/employees.component').then(m => m.EmployeesComponent)
+        loadComponent: () => import('./employees/employees.component').then(m => m.AdminEmployeesComponent)
       }
     ]
   }

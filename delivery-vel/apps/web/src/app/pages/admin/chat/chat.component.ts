@@ -1,38 +1,16 @@
-import { Component, OnInit, signal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ChatService } from '@delivery-vel/data';
+import { 
+  ChatMessage, 
+  ChatRoom, 
+  ChatParticipant, 
+  SendMessageRequest 
+} from '../../../models/chat.model';
 
-interface ChatMessage {
-  id: string;
-  senderId: string;
-  senderName: string;
-  senderType: 'customer' | 'admin';
-  message: string;
-  timestamp: Date;
-  isRead: boolean;
-  attachments?: ChatAttachment[];
-}
-
-interface ChatAttachment {
-  id: string;
-  name: string;
-  url: string;
-  type: 'image' | 'document';
-  size: number;
-}
-
-interface ChatConversation {
-  id: string;
-  customerId: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone?: string;
-  lastMessage: string;
-  lastMessageTime: Date;
-  unreadCount: number;
-  status: 'active' | 'closed' | 'pending';
-  messages: ChatMessage[];
-}
+// Removendo interfaces duplicadas - usando as do modelo
+// As interfaces ChatMessage, ChatAttachment, etc. já estão definidas em chat.model.ts
 
 @Component({
   selector: 'app-admin-chat',
@@ -95,39 +73,39 @@ interface ChatConversation {
         <div class="conversations-list">
           <div 
             class="conversation-item" 
-            *ngFor="let conversation of filteredConversations()"
-            [class.active]="selectedConversation?.id === conversation.id"
-            [class.unread]="conversation.unreadCount > 0"
-            (click)="selectConversation(conversation)"
+            *ngFor="let chatRoom of filteredChatRooms()"
+            [class.active]="selectedChatRoom?.id === chatRoom.id"
+            [class.unread]="chatRoom.unreadCount > 0"
+            (click)="selectChatRoom(chatRoom)"
           >
             <div class="conversation-avatar">
               <div class="avatar-circle">
-                {{ getInitials(conversation.customerName) }}
+                {{ getInitials(getCustomerName(chatRoom)) }}
               </div>
               <div 
                 class="status-indicator" 
-                [class.active]="conversation.status === 'active'"
-                [class.pending]="conversation.status === 'pending'"
-                [class.closed]="conversation.status === 'closed'"
+                [class.active]="chatRoom.status === 'active'"
+                [class.pending]="chatRoom.status === 'pending'"
+                [class.closed]="chatRoom.status === 'closed'"
               ></div>
             </div>
 
             <div class="conversation-info">
               <div class="conversation-header">
-                <h4 class="customer-name">{{ conversation.customerName }}</h4>
-                <span class="timestamp">{{ formatTime(conversation.lastMessageTime) }}</span>
+                <h4 class="customer-name">{{ getCustomerName(chatRoom) }}</h4>
+                <span class="timestamp">{{ formatTime(chatRoom.updatedAt) }}</span>
               </div>
-              <p class="last-message">{{ conversation.lastMessage }}</p>
+              <p class="last-message">{{ chatRoom.lastMessage || 'Nova conversa' }}</p>
               <div class="conversation-meta">
-                <span class="customer-email">{{ conversation.customerEmail }}</span>
-                <span class="unread-badge" *ngIf="conversation.unreadCount > 0">
-                  {{ conversation.unreadCount }}
+                <span class="customer-email">{{ getCustomerEmail(chatRoom) }}</span>
+                <span class="unread-badge" *ngIf="chatRoom.unreadCount > 0">
+                  {{ chatRoom.unreadCount }}
                 </span>
               </div>
             </div>
           </div>
 
-          <div class="empty-state" *ngIf="filteredConversations().length === 0">
+          <div class="empty-state" *ngIf="filteredChatRooms().length === 0">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -137,25 +115,22 @@ interface ChatConversation {
       </div>
 
       <div class="chat-main">
-        <div class="chat-header" *ngIf="selectedConversation">
+        <div class="chat-header" *ngIf="selectedChatRoom">
           <div class="customer-info">
             <div class="customer-avatar">
-              {{ getInitials(selectedConversation.customerName) }}
+              {{ getInitials(getCustomerName(selectedChatRoom)) }}
             </div>
             <div class="customer-details">
-              <h3>{{ selectedConversation.customerName }}</h3>
-              <p>{{ selectedConversation.customerEmail }}</p>
-              <span class="phone" *ngIf="selectedConversation.customerPhone">
-                {{ selectedConversation.customerPhone }}
-              </span>
+              <h3>{{ getCustomerName(selectedChatRoom) }}</h3>
+              <p>{{ getCustomerEmail(selectedChatRoom) }}</p>
             </div>
           </div>
 
           <div class="chat-actions">
             <button 
               class="action-btn"
-              [class.active]="selectedConversation.status === 'active'"
-              (click)="updateConversationStatus(selectedConversation, 'active')"
+              [class.active]="selectedChatRoom.status === 'active'"
+              (click)="updateChatRoomStatus(selectedChatRoom, 'active')"
               title="Marcar como ativa"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -165,8 +140,8 @@ interface ChatConversation {
             </button>
             <button 
               class="action-btn"
-              [class.active]="selectedConversation.status === 'closed'"
-              (click)="updateConversationStatus(selectedConversation, 'closed')"
+              [class.active]="selectedChatRoom.status === 'closed'"
+              (click)="updateChatRoomStatus(selectedChatRoom, 'closed')"
               title="Fechar conversa"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -177,40 +152,28 @@ interface ChatConversation {
           </div>
         </div>
 
-        <div class="messages-container" #messagesContainer *ngIf="selectedConversation">
+        <div class="messages-container" #messagesContainer *ngIf="selectedChatRoom">
           <div class="messages-list">
             <div 
               class="message" 
-              *ngFor="let message of selectedConversation.messages"
+              *ngFor="let message of currentMessages()"
               [class.sent]="message.senderType === 'admin'"
               [class.received]="message.senderType === 'customer'"
             >
               <div class="message-content">
                 <div class="message-bubble">
-                  <p>{{ message.message }}</p>
-                  <div class="message-attachments" *ngIf="message.attachments && message.attachments.length > 0">
-                    <div 
-                      class="attachment" 
-                      *ngFor="let attachment of message.attachments"
-                      (click)="openAttachment(attachment)"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"></path>
-                      </svg>
-                      <span>{{ attachment.name }}</span>
-                    </div>
-                  </div>
+                  <p>{{ message.content }}</p>
                 </div>
                 <div class="message-info">
                   <span class="sender">{{ message.senderName }}</span>
-                  <span class="timestamp">{{ formatMessageTime(message.timestamp) }}</span>
+                  <span class="timestamp">{{ formatMessageTime(message.createdAt) }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="message-input" *ngIf="selectedConversation">
+        <div class="message-input" *ngIf="selectedChatRoom">
           <div class="input-container">
             <button class="attachment-btn" title="Anexar arquivo">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -237,7 +200,7 @@ interface ChatConversation {
           </div>
         </div>
 
-        <div class="no-conversation" *ngIf="!selectedConversation">
+        <div class="no-conversation" *ngIf="!selectedChatRoom">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
@@ -760,166 +723,50 @@ interface ChatConversation {
 export class AdminChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
-  conversations = signal<ChatConversation[]>([]);
-  filteredConversations = signal<ChatConversation[]>([]);
-  selectedConversation: ChatConversation | null = null;
+  private chatService = inject(ChatService);
+
+  chatRooms = this.chatService.chatRooms;
+  filteredChatRooms = signal<ChatRoom[]>([]);
+  selectedChatRoom: ChatRoom | null = null;
+  currentMessages = signal<ChatMessage[]>([]);
   searchTerm = '';
   statusFilter = 'all';
   newMessage = '';
 
   ngOnInit() {
-    this.loadConversations();
+    this.loadChatRooms();
   }
 
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
 
-  private loadConversations() {
-    // Mock data - em uma aplicação real, estes dados viriam de um serviço
-    const mockConversations: ChatConversation[] = [
-      {
-        id: '1',
-        customerId: 'customer1',
-        customerName: 'João Silva',
-        customerEmail: 'joao@email.com',
-        customerPhone: '(11) 99999-9999',
-        lastMessage: 'Olá, gostaria de saber sobre o status do meu pedido',
-        lastMessageTime: new Date(Date.now() - 5 * 60 * 1000), // 5 minutos atrás
-        unreadCount: 2,
-        status: 'active',
-        messages: [
-          {
-            id: 'm1',
-            senderId: 'customer1',
-            senderName: 'João Silva',
-            senderType: 'customer',
-            message: 'Olá, fiz um pedido há 30 minutos e ainda não recebi confirmação',
-            timestamp: new Date(Date.now() - 30 * 60 * 1000),
-            isRead: true
-          },
-          {
-            id: 'm2',
-            senderId: 'admin1',
-            senderName: 'Atendente',
-            senderType: 'admin',
-            message: 'Olá João! Vou verificar o status do seu pedido agora mesmo.',
-            timestamp: new Date(Date.now() - 25 * 60 * 1000),
-            isRead: true
-          },
-          {
-            id: 'm3',
-            senderId: 'customer1',
-            senderName: 'João Silva',
-            senderType: 'customer',
-            message: 'Obrigado! Aguardo retorno.',
-            timestamp: new Date(Date.now() - 20 * 60 * 1000),
-            isRead: true
-          },
-          {
-            id: 'm4',
-            senderId: 'customer1',
-            senderName: 'João Silva',
-            senderType: 'customer',
-            message: 'Olá, gostaria de saber sobre o status do meu pedido',
-            timestamp: new Date(Date.now() - 5 * 60 * 1000),
-            isRead: false
-          }
-        ]
-      },
-      {
-        id: '2',
-        customerId: 'customer2',
-        customerName: 'Maria Santos',
-        customerEmail: 'maria@email.com',
-        customerPhone: '(11) 88888-8888',
-        lastMessage: 'Posso trocar um item do meu pedido?',
-        lastMessageTime: new Date(Date.now() - 15 * 60 * 1000), // 15 minutos atrás
-        unreadCount: 1,
-        status: 'pending',
-        messages: [
-          {
-            id: 'm5',
-            senderId: 'customer2',
-            senderName: 'Maria Santos',
-            senderType: 'customer',
-            message: 'Oi! Acabei de fazer um pedido mas gostaria de trocar a pizza margherita por uma calabresa. É possível?',
-            timestamp: new Date(Date.now() - 20 * 60 * 1000),
-            isRead: true
-          },
-          {
-            id: 'm6',
-            senderId: 'customer2',
-            senderName: 'Maria Santos',
-            senderType: 'customer',
-            message: 'Posso trocar um item do meu pedido?',
-            timestamp: new Date(Date.now() - 15 * 60 * 1000),
-            isRead: false
-          }
-        ]
-      },
-      {
-        id: '3',
-        customerId: 'customer3',
-        customerName: 'Pedro Oliveira',
-        customerEmail: 'pedro@email.com',
-        lastMessage: 'Obrigado pelo atendimento!',
-        lastMessageTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-        unreadCount: 0,
-        status: 'closed',
-        messages: [
-          {
-            id: 'm7',
-            senderId: 'customer3',
-            senderName: 'Pedro Oliveira',
-            senderType: 'customer',
-            message: 'Recebi meu pedido. Estava tudo perfeito!',
-            timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-            isRead: true
-          },
-          {
-            id: 'm8',
-            senderId: 'admin1',
-            senderName: 'Atendente',
-            senderType: 'admin',
-            message: 'Que bom saber! Ficamos felizes que tenha gostado. Obrigado pela preferência!',
-            timestamp: new Date(Date.now() - 2.5 * 60 * 60 * 1000),
-            isRead: true
-          },
-          {
-            id: 'm9',
-            senderId: 'customer3',
-            senderName: 'Pedro Oliveira',
-            senderType: 'customer',
-            message: 'Obrigado pelo atendimento!',
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            isRead: true
-          }
-        ]
-      }
-    ];
-
-    this.conversations.set(mockConversations);
-    this.filteredConversations.set(mockConversations);
+  private loadChatRooms() {
+    this.chatService.getChatRooms().subscribe(rooms => {
+      this.filteredChatRooms.set(rooms);
+    });
+  }
+    // Removendo dados mock - agora usando ChatService
   }
 
   filterConversations() {
-    let filtered = this.conversations();
+    let filtered = this.chatRooms();
 
-    if (this.searchTerm) {
+    if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(conv => 
-        conv.customerName.toLowerCase().includes(term) ||
-        conv.customerEmail.toLowerCase().includes(term) ||
-        conv.lastMessage.toLowerCase().includes(term)
+      filtered = filtered.filter(room => 
+        room.participants.some(p => 
+          p.name.toLowerCase().includes(term) || 
+          p.email?.toLowerCase().includes(term)
+        )
       );
     }
 
     if (this.statusFilter !== 'all') {
-      filtered = filtered.filter(conv => conv.status === this.statusFilter);
+      filtered = filtered.filter(room => room.status === this.statusFilter);
     }
 
-    this.filteredConversations.set(filtered);
+    this.filteredChatRooms.set(filtered);
   }
 
   setStatusFilter(status: string) {
@@ -927,52 +774,59 @@ export class AdminChatComponent implements OnInit, AfterViewChecked {
     this.filterConversations();
   }
 
-  selectConversation(conversation: ChatConversation) {
-    this.selectedConversation = conversation;
-    // Marcar mensagens como lidas
-    conversation.unreadCount = 0;
-    conversation.messages.forEach(msg => {
-      if (msg.senderType === 'customer') {
-        msg.isRead = true;
-      }
+  selectChatRoom(chatRoom: ChatRoom) {
+    this.selectedChatRoom = chatRoom;
+    
+    // Carregar mensagens da sala
+    this.chatService.getChatMessages(chatRoom.id).subscribe(messages => {
+      this.currentMessages.set(messages);
     });
+
+    // Marcar mensagens como lidas
+    this.chatService.markMessagesAsRead(chatRoom.id, 'admin').subscribe();
   }
 
   sendMessage() {
-    if (!this.newMessage.trim() || !this.selectedConversation) return;
+    if (!this.newMessage.trim() || !this.selectedChatRoom) return;
 
-    const newMsg: ChatMessage = {
-      id: Date.now().toString(),
+    const messageRequest: SendMessageRequest = {
+      chatRoomId: this.selectedChatRoom.id,
       senderId: 'admin1',
       senderName: 'Atendente',
-      senderType: 'admin',
       message: this.newMessage.trim(),
-      timestamp: new Date(),
-      isRead: true
+      senderType: 'admin'
     };
 
-    this.selectedConversation.messages.push(newMsg);
-    this.selectedConversation.lastMessage = newMsg.message;
-    this.selectedConversation.lastMessageTime = newMsg.timestamp;
-    
-    if (this.selectedConversation.status === 'pending') {
-      this.selectedConversation.status = 'active';
-    }
-
-    this.newMessage = '';
+    this.chatService.sendMessage(messageRequest).subscribe(message => {
+      const currentMessages = this.currentMessages();
+      this.currentMessages.set([...currentMessages, message]);
+      this.newMessage = '';
+    });
   }
 
-  updateConversationStatus(conversation: ChatConversation, status: 'active' | 'closed' | 'pending') {
-    conversation.status = status;
-    console.log(`Conversa com ${conversation.customerName} marcada como ${status}`);
+  updateChatRoomStatus(chatRoom: ChatRoom, status: 'active' | 'closed' | 'pending') {
+    this.chatService.closeChatRoom(chatRoom.id).subscribe(() => {
+      chatRoom.status = status;
+      console.log(`Conversa com ${this.getCustomerName(chatRoom)} marcada como ${status}`);
+    });
   }
 
   getActiveConversationsCount(): number {
-    return this.conversations().filter(conv => conv.status === 'active').length;
+    return this.chatRooms().filter(room => room.status === 'active').length;
   }
 
   getTotalUnreadCount(): number {
-    return this.conversations().reduce((total, conv) => total + conv.unreadCount, 0);
+    return this.chatRooms().reduce((total, room) => total + room.unreadCount, 0);
+  }
+
+  getCustomerName(chatRoom: ChatRoom): string {
+    const customer = chatRoom.participants.find(p => p.type === 'customer');
+    return customer?.name || 'Cliente';
+  }
+
+  getCustomerEmail(chatRoom: ChatRoom): string {
+    const customer = chatRoom.participants.find(p => p.type === 'customer');
+    return customer?.email || '';
   }
 
   getInitials(name: string): string {
@@ -1001,9 +855,7 @@ export class AdminChatComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  openAttachment(attachment: ChatAttachment) {
-    window.open(attachment.url, '_blank');
-  }
+
 
   private scrollToBottom() {
     if (this.messagesContainer) {

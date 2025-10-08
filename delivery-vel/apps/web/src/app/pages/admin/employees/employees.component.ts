@@ -1118,7 +1118,7 @@ export class AdminEmployeesComponent implements OnInit {
         name: 'João Santos',
         email: 'joao.santos@delivery.com',
         phone: '(31) 97777-7777',
-        role: UserRole.EMPLOYEE,
+        role: 'EMPLOYEE' as UserRole,
         department: 'Cozinha',
         position: 'Chef de Cozinha',
         hireDate: new Date('2023-05-10'),
@@ -1130,7 +1130,7 @@ export class AdminEmployeesComponent implements OnInit {
         name: 'Ana Costa',
         email: 'ana.costa@delivery.com',
         phone: '(31) 96666-6666',
-        role: UserRole.EMPLOYEE,
+        role: 'EMPLOYEE' as UserRole,
         department: 'Atendimento',
         position: 'Atendente',
         hireDate: new Date('2023-07-01'),
@@ -1237,7 +1237,7 @@ export class AdminEmployeesComponent implements OnInit {
   }
 
   getStatusName(status: string): string {
-    const statusNames = {
+    const statusNames: { [key: string]: string } = {
       'active': 'Ativo',
       'inactive': 'Inativo',
       'on_leave': 'Em Licença'
@@ -1246,11 +1246,11 @@ export class AdminEmployeesComponent implements OnInit {
   }
 
   getRoleName(role: UserRole): string {
-    const roleNames = {
-      [UserRole.ADMIN]: 'Administrador',
-      [UserRole.MANAGER]: 'Gerente',
-      [UserRole.EMPLOYEE]: 'Funcionário',
-      [UserRole.CUSTOMER]: 'Cliente'
+    const roleNames: { [key: string]: string } = {
+      'ADMIN': 'Administrador',
+      'MANAGER': 'Gerente',
+      'EMPLOYEE': 'Funcionário',
+      'CUSTOMER': 'Cliente'
     };
     return roleNames[role] || role;
   }
@@ -1360,7 +1360,7 @@ export class AdminEmployeesComponent implements OnInit {
   }
 
   getCategoryName(category: string): string {
-    const categoryNames = {
+    const categoryNames: { [key: string]: string } = {
       'orders': 'Pedidos',
       'products': 'Produtos',
       'inventory': 'Estoque',

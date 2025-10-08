@@ -1,0 +1,210 @@
+/* Mobile App Layout Styles */
+.mobile-app-layout {
+  @media (max-width: 767px) {
+    padding-bottom: 80px; /* Space for mobile navigation */
+  }
+}
+
+.mobile-header {
+  @media (max-width: 767px) {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 767px) {
+  /* Hide desktop elements on mobile */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Mobile-specific styles */
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Adjust main content for mobile */
+  main {
+    min-height: calc(100vh - 64px - 80px); /* Header height - Navigation height */
+  }
+
+  /* Mobile-friendly buttons */
+  .btn {
+    min-height: 44px; /* Touch-friendly size */
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Mobile-friendly form inputs */
+  input, select, textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px;
+  }
+
+  /* Mobile-friendly cards */
+  .card {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Mobile-friendly spacing */
+  .section {
+    padding: 24px 16px;
+  }
+
+  /* Mobile-friendly typography */
+  h1 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  /* Mobile-friendly grid layouts */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Mobile-friendly product cards */
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Mobile-friendly modals */
+  .modal {
+    margin: 16px;
+    max-height: calc(100vh - 32px);
+    border-radius: 12px;
+  }
+
+  /* Mobile-friendly tables */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-friendly navigation */
+  .mobile-menu {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* PWA-like styles for mobile */
+@media (max-width: 767px) {
+  /* Status bar safe area */
+  .mobile-app-layout {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Bottom safe area for navigation */
+  .mobile-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Touch-friendly interactions */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Loading states */
+  .loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Pull-to-refresh indicator */
+  .pull-to-refresh {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+  }
+
+  /* Swipe gestures */
+  .swipeable {
+    touch-action: pan-y;
+  }
+
+  /* Mobile-friendly animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Mobile-friendly focus states */
+  .focus-visible {
+    outline: 2px solid #84cc16;
+    outline-offset: 2px;
+  }
+
+  /* Mobile-friendly hover states (disabled on touch devices) */
+  @media (hover: none) {
+    .hover\:bg-gray-100:hover {
+      background-color: inherit;
+    }
+  }
+}

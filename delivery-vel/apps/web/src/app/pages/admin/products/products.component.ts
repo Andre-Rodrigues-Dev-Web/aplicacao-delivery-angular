@@ -7,6 +7,8 @@ interface AdminProduct extends Product {
   stock: number;
   cost: number;
   isActive: boolean;
+  isVegetarian?: boolean;
+  options?: { [key: string]: string };
 }
 
 @Component({
@@ -774,12 +776,22 @@ export class AdminProductsComponent implements OnInit {
         price: 35.90,
         cost: 18.50,
         stock: 25,
-        category: ProductCategory.PIZZA,
+        category: {
+          id: 'PIZZA',
+          name: 'Pizza',
+          slug: 'pizza',
+          isActive: true,
+          sortOrder: 1
+        },
         image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400',
         isFeatured: true,
         isVegetarian: true,
         isActive: true,
+        rating: 4.8,
+        reviewCount: 125,
         preparationTime: 25,
+        isAvailable: true,
+        tags: ['Vegetariano', 'Clássico'],
         ingredients: ['Molho de tomate', 'Mussarela', 'Manjericão'],
         allergens: ['Glúten', 'Lactose'],
         nutritionalInfo: {
@@ -789,7 +801,29 @@ export class AdminProductsComponent implements OnInit {
           fat: 10,
           fiber: 2
         },
-        options: []
+        restaurant: {
+          id: 'rest-1',
+          name: 'Pizzaria Italiana',
+          slug: 'pizzaria-italiana',
+          rating: 4.7,
+          reviewCount: 500,
+          deliveryTime: 30,
+          deliveryFee: 5.90,
+          minimumOrder: 25.00,
+          isOpen: true,
+          cuisine: ['Italiana'],
+          address: {
+            street: 'Rua das Flores',
+            number: '123',
+            neighborhood: 'Centro',
+            city: 'São Paulo',
+            state: 'SP',
+            zipCode: '01234-567'
+          }
+        },
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-15'),
+        options: {}
       },
       {
         id: '2',
@@ -798,12 +832,22 @@ export class AdminProductsComponent implements OnInit {
         price: 28.90,
         cost: 15.20,
         stock: 8,
-        category: ProductCategory.BURGER,
+        category: {
+          id: 'BURGER',
+          name: 'Hambúrguer',
+          slug: 'burger',
+          isActive: true,
+          sortOrder: 2
+        },
         image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400',
         isFeatured: false,
         isVegetarian: false,
         isActive: true,
+        rating: 4.5,
+        reviewCount: 89,
         preparationTime: 15,
+        isAvailable: true,
+        tags: ['Artesanal', 'Clássico'],
         ingredients: ['Pão brioche', 'Carne bovina', 'Queijo cheddar', 'Alface', 'Tomate'],
         allergens: ['Glúten', 'Lactose'],
         nutritionalInfo: {
@@ -813,7 +857,29 @@ export class AdminProductsComponent implements OnInit {
           fat: 25,
           fiber: 3
         },
-        options: []
+        restaurant: {
+          id: 'rest-2',
+          name: 'Burger House',
+          slug: 'burger-house',
+          rating: 4.6,
+          reviewCount: 300,
+          deliveryTime: 25,
+          deliveryFee: 4.90,
+          minimumOrder: 20.00,
+          isOpen: true,
+          cuisine: ['Americana'],
+          address: {
+            street: 'Av. Paulista',
+            number: '456',
+            neighborhood: 'Bela Vista',
+            city: 'São Paulo',
+            state: 'SP',
+            zipCode: '01310-100'
+          }
+        },
+        createdAt: new Date('2024-01-02'),
+        updatedAt: new Date('2024-01-16'),
+        options: {}
       },
       {
         id: '3',
@@ -822,12 +888,22 @@ export class AdminProductsComponent implements OnInit {
         price: 45.90,
         cost: 28.30,
         stock: 15,
-        category: ProductCategory.SUSHI,
+        category: {
+          id: 'SUSHI',
+          name: 'Sushi',
+          slug: 'sushi',
+          isActive: true,
+          sortOrder: 3
+        },
         image: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400',
         isFeatured: true,
         isVegetarian: false,
         isActive: true,
+        rating: 4.9,
+        reviewCount: 156,
         preparationTime: 20,
+        isAvailable: true,
+        tags: ['Fresco', 'Premium'],
         ingredients: ['Arroz japonês', 'Salmão', 'Atum', 'Camarão', 'Nori'],
         allergens: ['Peixe', 'Crustáceos'],
         nutritionalInfo: {
@@ -837,7 +913,29 @@ export class AdminProductsComponent implements OnInit {
           fat: 12,
           fiber: 1
         },
-        options: []
+        restaurant: {
+          id: 'rest-3',
+          name: 'Sushi Master',
+          slug: 'sushi-master',
+          rating: 4.8,
+          reviewCount: 450,
+          deliveryTime: 35,
+          deliveryFee: 6.90,
+          minimumOrder: 30.00,
+          isOpen: true,
+          cuisine: ['Japonesa'],
+          address: {
+            street: 'Rua da Liberdade',
+            number: '789',
+            neighborhood: 'Liberdade',
+            city: 'São Paulo',
+            state: 'SP',
+            zipCode: '01503-001'
+          }
+        },
+        createdAt: new Date('2024-01-03'),
+        updatedAt: new Date('2024-01-17'),
+        options: {}
       }
     ];
 
@@ -857,7 +955,7 @@ export class AdminProductsComponent implements OnInit {
     }
 
     if (this.categoryFilter) {
-      filtered = filtered.filter(product => product.category === this.categoryFilter);
+      filtered = filtered.filter(product => product.category.id === this.categoryFilter);
     }
 
     if (this.statusFilter) {
@@ -869,14 +967,14 @@ export class AdminProductsComponent implements OnInit {
   }
 
   getCategoryName(category: ProductCategory): string {
-    const categoryNames = {
-      [ProductCategory.PIZZA]: 'Pizza',
-      [ProductCategory.BURGER]: 'Hambúrguer',
-      [ProductCategory.SUSHI]: 'Sushi',
-      [ProductCategory.BEVERAGE]: 'Bebida',
-      [ProductCategory.DESSERT]: 'Sobremesa'
+    const categoryNames: { [key: string]: string } = {
+      'PIZZA': 'Pizza',
+      'BURGER': 'Hambúrguer',
+      'SUSHI': 'Sushi',
+      'BEVERAGE': 'Bebida',
+      'DESSERT': 'Sobremesa'
     };
-    return categoryNames[category] || category;
+    return categoryNames[category.id] || category.name || category.id;
   }
 
   openProductModal(product?: AdminProduct) {

@@ -1,6 +1,6 @@
-<div class="min-h-screen bg-neutral-light">
+<div class="min-h-screen bg-neutral-light mobile-app-layout">
   <!-- Header -->
-  <header class="bg-white shadow-sm border-b border-neutral-200">
+  <header class="bg-white shadow-sm border-b border-neutral-200 mobile-header">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo -->
@@ -10,7 +10,7 @@
           </div>
         </div>
 
-        <!-- Navigation -->
+        <!-- Desktop Navigation -->
         <nav class="hidden md:flex space-x-8">
           <a routerLink="/home" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Início
@@ -146,6 +146,18 @@
   <main class="flex-1">
     <router-outlet></router-outlet>
   </main>
+
+  <!-- Mobile Features Component -->
+  <app-mobile-features></app-mobile-features>
+  
+  <!-- Mobile Navigation -->
+  <app-mobile-navigation></app-mobile-navigation>
+
+  <!-- Cart Sidebar -->
+  <app-cart [isOpen]="isCartOpen()" (close)="closeCart()"></app-cart>
+
+  <!-- Chat Component -->
+  <app-chat [isOpen]="isChatOpen()" (close)="closeChat()"></app-chat>
 
   <!-- Footer -->
   <footer class="bg-neutral-900 text-neutral-light">

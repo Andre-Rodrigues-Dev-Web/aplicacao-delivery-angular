@@ -302,20 +302,21 @@ import { AuthService } from '@delivery-vel/data';
 })
 export class DashboardComponent {
   sidebarCollapsed = signal(false);
-  currentUser = this.authService.currentUser;
+  currentUser!: any;
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+    this.currentUser = this.authService.user;
+  }
 
   toggleSidebar() {
     this.sidebarCollapsed.update(collapsed => !collapsed);
   }
 
   logout() {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/auth/login']);
-    });
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

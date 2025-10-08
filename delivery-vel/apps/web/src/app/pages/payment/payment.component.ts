@@ -44,8 +44,10 @@ import { CartService } from '@delivery-vel/data';
                     <input 
                       type="tel" 
                       formControlName="phone"
+                      (input)="formatPhoneNumber($event)"
                       class="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
                       placeholder="(11) 99999-9999"
+                      maxlength="15"
                     >
                     @if (paymentForm.get('phone')?.invalid && paymentForm.get('phone')?.touched) {
                       <p class="text-red-500 text-sm mt-1">Telefone é obrigatório</p>
@@ -297,8 +299,12 @@ export class PaymentComponent implements OnInit {
         this.cartService.clearCart();
         this._isProcessing.set(false);
         
+        // Activate chat for customer support after successful order
+        sessionStorage.setItem('openChat', 'true');
+        sessionStorage.setItem('orderCompleted', 'true');
+        
         // Show success message and redirect
-        alert('Pedido realizado com sucesso! Você receberá uma confirmação em breve.');
+        alert('Pedido realizado com sucesso! Você receberá uma confirmação em breve. Um chat foi aberto para acompanhar seu pedido.');
         this.router.navigate(['/orders']);
       }, 2000);
     } else {
@@ -311,5 +317,41 @@ export class PaymentComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/cart']);
+  }
+
+  formatPhoneNumber(event: any): void {
+    const input = event.target;
+    let value = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+    
+    // Limita a 11 dígitos (DDD + número)
+    if (value.length > 11) {
+      value = value.substring(0, 11);
+    }
+    
+    let formattedValue = '';
+    
+    // Aplica a máscara baseada no tamanho
+    if (value.length === 0) {
+      formattedValue = '';
+    } else if (value.length <= 2) {
+      formattedValue = `(${value}`;
+    } else if (value.length <= 6) {
+      formattedValue = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+    } else if (value.length <= 10) {
+      // Para números com 8 dígitos (fixo): (XX) XXXX-XXXX
+      formattedValue = `(${value.substring(0, 2)}) ${value.substring(2, 6)}-${value.substring(6)}`;
+    } else {
+      // Para números com 9 dígitos (celular): (XX) XXXXX-XXXX
+      formattedValue = `(${value.substring(0, 2)}) ${value.substring(2, 7)}-${value.substring(7)}`;
+    }
+    
+    // Atualiza o valor do input
+    input.value = formattedValue;
+    
+    // Atualiza o form control com o valor formatado
+    this.paymentForm.get('phone')?.setValue(formattedValue);
+    
+    // Marca o campo como touched para ativar a validação
+    this.paymentForm.get('phone')?.markAsTouched();
   }
 }

@@ -1018,7 +1018,13 @@ export class AdminInventoryComponent implements OnInit {
         id: '1',
         productId: 'prod1',
         productName: 'Pizza Margherita',
-        category: ProductCategory.PIZZA,
+        category: {
+          id: 'PIZZA',
+          name: 'Pizza',
+          slug: 'pizza',
+          isActive: true,
+          sortOrder: 1
+        },
         currentStock: 25,
         minStock: 10,
         maxStock: 50,
@@ -1034,7 +1040,13 @@ export class AdminInventoryComponent implements OnInit {
         id: '2',
         productId: 'prod2',
         productName: 'Hambúrguer Clássico',
-        category: ProductCategory.BURGER,
+        category: {
+          id: 'BURGER',
+          name: 'Hambúrguer',
+          slug: 'burger',
+          isActive: true,
+          sortOrder: 2
+        },
         currentStock: 8,
         minStock: 15,
         maxStock: 40,
@@ -1049,7 +1061,13 @@ export class AdminInventoryComponent implements OnInit {
         id: '3',
         productId: 'prod3',
         productName: 'Sushi Combo',
-        category: ProductCategory.SUSHI,
+        category: {
+          id: 'SUSHI',
+          name: 'Sushi',
+          slug: 'sushi',
+          isActive: true,
+          sortOrder: 3
+        },
         currentStock: 0,
         minStock: 5,
         maxStock: 20,
@@ -1064,7 +1082,13 @@ export class AdminInventoryComponent implements OnInit {
         id: '4',
         productId: 'prod4',
         productName: 'Refrigerante Cola',
-        category: ProductCategory.BEVERAGE,
+        category: {
+          id: 'BEVERAGE',
+          name: 'Bebida',
+          slug: 'beverage',
+          isActive: true,
+          sortOrder: 4
+        },
         currentStock: 45,
         minStock: 20,
         maxStock: 100,
@@ -1132,7 +1156,7 @@ export class AdminInventoryComponent implements OnInit {
     }
 
     if (this.categoryFilter) {
-      filtered = filtered.filter(item => item.category === this.categoryFilter);
+      filtered = filtered.filter(item => item.category.id === this.categoryFilter);
     }
 
     if (this.statusFilter) {
@@ -1143,18 +1167,18 @@ export class AdminInventoryComponent implements OnInit {
   }
 
   getCategoryName(category: ProductCategory): string {
-    const categoryNames = {
-      [ProductCategory.PIZZA]: 'Pizza',
-      [ProductCategory.BURGER]: 'Hambúrguer',
-      [ProductCategory.SUSHI]: 'Sushi',
-      [ProductCategory.BEVERAGE]: 'Bebida',
-      [ProductCategory.DESSERT]: 'Sobremesa'
+    const categoryNames: { [key: string]: string } = {
+      'PIZZA': 'Pizza',
+      'BURGER': 'Hambúrguer',
+      'SUSHI': 'Sushi',
+      'BEVERAGE': 'Bebida',
+      'DESSERT': 'Sobremesa'
     };
-    return categoryNames[category] || category;
+    return categoryNames[category.id] || category.name || category.id;
   }
 
   getStatusName(status: string): string {
-    const statusNames = {
+    const statusNames: { [key: string]: string } = {
       'in_stock': 'Em Estoque',
       'low_stock': 'Estoque Baixo',
       'out_of_stock': 'Sem Estoque',
