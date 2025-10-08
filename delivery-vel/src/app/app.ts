@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CartService } from './services/cart.service';
 
 @Component({
   selector: 'app-root',

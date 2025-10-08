@@ -1,5 +1,3 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -13,7 +11,15 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@delivery-vel/data": ["libs/data/src/public-api.ts"],
+      "@delivery-vel/features": ["libs/features/src/public-api.ts"],
+      "@delivery-vel/ui": ["libs/ui/src/public-api.ts"],
+      "@delivery-vel/utils": ["libs/utils/src/public-api.ts"],
+      "@delivery-vel/mocks": ["libs/mocks/src/public-api.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

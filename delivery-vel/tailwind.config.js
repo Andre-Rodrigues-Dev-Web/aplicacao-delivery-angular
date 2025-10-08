@@ -9,29 +9,62 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Nova paleta de cores baseada na imagem
+        brand: {
+          lime: '#DBF227',      // Verde-limão vibrante
+          olive: '#D4D952',     // Verde-oliva
+          red: '#F22D18',       // Vermelho vibrante
+          light: '#F2F2F2',     // Cinza claro
+          dark: '#0D0D0D',      // Preto/cinza escuro
+        },
         primary: {
+          50: '#f7fee7',
+          100: '#ecfccb',
+          200: '#d9f99d',
+          300: '#bef264',
+          400: '#a3e635',
+          500: '#DBF227',  // Cor principal - lime
+          600: '#c4d91f',
+          700: '#a3b818',
+          800: '#84cc16',
+          900: '#65a30d',
+        },
+        secondary: {
+          50: '#fefce8',
+          100: '#fef9c3',
+          200: '#fef08a',
+          300: '#fde047',
+          400: '#facc15',
+          500: '#D4D952',  // Cor secundária - olive
+          600: '#ca8a04',
+          700: '#a16207',
+          800: '#854d0e',
+          900: '#713f12',
+        },
+        accent: {
           50: '#fef2f2',
           100: '#fee2e2',
           200: '#fecaca',
           300: '#fca5a5',
           400: '#f87171',
-          500: '#ef4444',
+          500: '#F22D18',  // Cor de destaque - red
           600: '#dc2626',
           700: '#b91c1c',
           800: '#991b1b',
           900: '#7f1d1d',
         },
-        secondary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+        neutral: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#0D0D0D',  // Cor neutra escura
+          light: '#F2F2F2', // Cor neutra clara
         },
         success: {
           50: '#f0fdf4',
@@ -63,7 +96,7 @@ module.exports = {
           200: '#fecaca',
           300: '#fca5a5',
           400: '#f87171',
-          500: '#ef4444',
+          500: '#F22D18',  // Usando a cor vermelha da paleta
           600: '#dc2626',
           700: '#b91c1c',
           800: '#991b1b',
@@ -109,6 +142,14 @@ module.exports = {
         'xl': '1rem',
         '2xl': '1.5rem',
         '3xl': '2rem',
+      },
+      screens: {
+        'xs': '475px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       },
     },
   },

@@ -209,8 +209,12 @@ export class StorageService {
       const transaction = db.transaction(['storage'], 'readonly');
       const store = transaction.objectStore('storage');
       
-      const result = await store.get(this.PREFIX + key);
-      return result?.value || null;
+      const request = store.get(this.PREFIX + key);
+      const result = await new Promise<any>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      return (result as any)?.value || null;
     } catch (error) {
       console.error('Error retrieving large item:', error);
       return null;

@@ -1,53 +1,137 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-neutral-light">
   <!-- Header -->
-  <header class="bg-white shadow-sm border-b border-gray-200">
+  <header class="bg-white shadow-sm border-b border-neutral-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo -->
         <div class="flex items-center">
           <div class="flex-shrink-0">
-            <h1 class="text-2xl font-bold text-orange-600">DeliveryVel</h1>
+            <h1 class="text-2xl font-bold text-brand-lime">DeliveryVel</h1>
           </div>
         </div>
 
         <!-- Navigation -->
         <nav class="hidden md:flex space-x-8">
-          <a routerLink="/home" class="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium">
+          <a routerLink="/home" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Início
           </a>
-          <a routerLink="/menu" class="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium">
+          <a routerLink="/menu" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Cardápio
           </a>
-          <a routerLink="/orders" class="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md text-sm font-medium">
+          <a routerLink="/orders" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
             Pedidos
           </a>
         </nav>
 
-        <!-- User Actions -->
-        <div class="flex items-center space-x-4">
-          <!-- Cart -->
-          <button class="relative p-2 text-gray-600 hover:text-orange-600">
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center space-x-2">
+          <!-- Mobile Cart Button -->
+          <button 
+            class="relative p-2 text-neutral-600 hover:text-brand-lime transition-colors"
+            (click)="toggleCart()"
+          >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z">
               </path>
             </svg>
-            <span class="absolute -top-1 -right-1 bg-orange-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              0
-            </span>
+            @if (cartItemsCount() > 0) {
+              <span class="absolute -top-1 -right-1 bg-brand-red text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-xs">
+                {{ cartItemsCount() }}
+              </span>
+            }
+          </button>
+          
+          <!-- Mobile Menu Toggle -->
+          <button 
+            class="text-neutral-700 hover:text-brand-lime p-2"
+            (click)="toggleMobileMenu()"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- User Actions -->
+        <div class="hidden md:flex items-center space-x-4">
+          <!-- Cart -->
+          <button 
+            class="relative p-2 text-neutral-600 hover:text-brand-lime transition-colors"
+            (click)="toggleCart()"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z">
+              </path>
+            </svg>
+            @if (cartItemsCount() > 0) {
+              <span class="absolute -top-1 -right-1 bg-brand-red text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {{ cartItemsCount() }}
+              </span>
+            }
           </button>
 
           <!-- User Menu -->
-          <button class="flex items-center space-x-2 text-gray-700 hover:text-orange-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-              </path>
-            </svg>
-            <span class="text-sm font-medium">Entrar</span>
-          </button>
+          <div class="relative">
+            <button 
+              class="flex items-center space-x-2 text-neutral-700 hover:text-brand-lime transition-colors"
+              (click)="toggleUserMenu()"
+            >
+              <span class="text-2xl">👤</span>
+              <span class="hidden lg:block">Conta</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            
+            @if (showUserMenu()) {
+              <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-neutral-200">
+                <a routerLink="/auth/login" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-brand-lime hover:text-neutral-900 transition-colors">
+                  Entrar
+                </a>
+                <a routerLink="/auth/register" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-brand-lime hover:text-neutral-900 transition-colors">
+                  Criar conta
+                </a>
+                <hr class="my-1 border-neutral-200">
+                <a href="#" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-brand-lime hover:text-neutral-900 transition-colors">
+                  Meus pedidos
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-brand-lime hover:text-neutral-900 transition-colors">
+                  Endereços
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-brand-lime hover:text-neutral-900 transition-colors">
+                  Configurações
+                </a>
+              </div>
+            }
+          </div>
         </div>
       </div>
+
+      <!-- Mobile Menu -->
+      @if (showMobileMenu()) {
+        <div class="md:hidden border-t border-neutral-200 py-4">
+          <div class="flex flex-col space-y-2">
+            <a routerLink="/home" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Início
+            </a>
+            <a routerLink="/menu" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Cardápio
+            </a>
+            <a routerLink="/orders" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Pedidos
+            </a>
+            <hr class="my-2 border-neutral-200">
+            <a routerLink="/auth/login" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Entrar
+            </a>
+            <a routerLink="/auth/register" class="text-neutral-700 hover:text-brand-lime px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Criar conta
+            </a>
+          </div>
+        </div>
+      }
     </div>
   </header>
 
@@ -57,41 +141,41 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 text-white">
+  <footer class="bg-neutral-900 text-neutral-light">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 class="text-lg font-semibold mb-4">DeliveryVel</h3>
-          <p class="text-gray-300 text-sm">
+          <h3 class="text-lg font-semibold mb-4 text-brand-lime">DeliveryVel</h3>
+          <p class="text-neutral-300 text-sm">
             Seu delivery favorito com a melhor comida da cidade.
           </p>
         </div>
         <div>
-          <h4 class="text-md font-medium mb-3">Links Rápidos</h4>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li><a href="#" class="hover:text-white">Cardápio</a></li>
-            <li><a href="#" class="hover:text-white">Promoções</a></li>
-            <li><a href="#" class="hover:text-white">Sobre Nós</a></li>
+          <h4 class="text-md font-medium mb-3 text-brand-olive">Links Rápidos</h4>
+          <ul class="space-y-2 text-sm text-neutral-300">
+            <li><a href="#" class="hover:text-brand-lime transition-colors">Cardápio</a></li>
+            <li><a href="#" class="hover:text-brand-lime transition-colors">Promoções</a></li>
+            <li><a href="#" class="hover:text-brand-lime transition-colors">Sobre Nós</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-md font-medium mb-3">Suporte</h4>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li><a href="#" class="hover:text-white">Central de Ajuda</a></li>
-            <li><a href="#" class="hover:text-white">Contato</a></li>
-            <li><a href="#" class="hover:text-white">Termos de Uso</a></li>
+          <h4 class="text-md font-medium mb-3 text-brand-olive">Suporte</h4>
+          <ul class="space-y-2 text-sm text-neutral-300">
+            <li><a href="#" class="hover:text-brand-lime transition-colors">Central de Ajuda</a></li>
+            <li><a href="#" class="hover:text-brand-lime transition-colors">Contato</a></li>
+            <li><a href="#" class="hover:text-brand-lime transition-colors">Termos de Uso</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-md font-medium mb-3">Contato</h4>
-          <div class="space-y-2 text-sm text-gray-300">
+          <h4 class="text-md font-medium mb-3 text-brand-olive">Contato</h4>
+          <div class="space-y-2 text-sm text-neutral-300">
             <p>📞 (11) 99999-9999</p>
             <p>📧 contato@deliveryvel.com</p>
             <p>📍 São Paulo, SP</p>
           </div>
         </div>
       </div>
-      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
+      <div class="border-t border-neutral-700 mt-8 pt-8 text-center text-sm text-neutral-300">
         <p>&copy; 2024 DeliveryVel. Todos os direitos reservados.</p>
       </div>
     </div>

@@ -6,27 +6,27 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-neutral-light">
       <!-- Header -->
       <div class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 class="text-3xl font-bold text-gray-900">Meus Pedidos</h1>
-          <p class="text-gray-600 mt-2">Acompanhe o status dos seus pedidos</p>
+          <h1 class="text-3xl font-bold text-neutral-900">Meus Pedidos</h1>
+          <p class="text-neutral-600 mt-2">Acompanhe o status dos seus pedidos</p>
         </div>
       </div>
 
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Tabs -->
-        <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-8">
+        <div class="flex space-x-1 bg-neutral-100 p-1 rounded-lg mb-8">
           <button 
             (click)="activeTab = 'current'"
-            [class]="activeTab === 'current' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+            [class]="activeTab === 'current' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-600 hover:text-neutral-900'"
             class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors">
             Pedidos Atuais
           </button>
           <button 
             (click)="activeTab = 'history'"
-            [class]="activeTab === 'history' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+            [class]="activeTab === 'history' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-600 hover:text-neutral-900'"
             class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors">
             Histórico
           </button>
@@ -37,42 +37,42 @@ import { CommonModule } from '@angular/common';
           <div class="space-y-6">
             @if (currentOrders.length === 0) {
               <div class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 text-neutral-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                         d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum pedido ativo</h3>
-                <p class="text-gray-600">Você não tem pedidos em andamento no momento.</p>
+                <h3 class="text-lg font-medium text-neutral-900 mb-2">Nenhum pedido ativo</h3>
+                <p class="text-neutral-600">Você não tem pedidos em andamento no momento.</p>
               </div>
             } @else {
               @for (order of currentOrders; track order.id) {
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
                   <!-- Order Header -->
-                  <div class="px-6 py-4 border-b border-gray-200">
-                    <div class="flex items-center justify-between">
+                  <div class="px-6 py-4 border-b border-neutral-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Pedido #{{ order.id }}</h3>
-                        <p class="text-sm text-gray-600">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</p>
+                        <h3 class="text-lg font-semibold text-neutral-900">Pedido #{{ order.id }}</h3>
+                        <p class="text-sm text-neutral-600">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</p>
                       </div>
-                      <div class="text-right">
+                      <div class="text-left sm:text-right">
                         <span 
                           [class]="getStatusClass(order.status)"
                           class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
                           {{ getStatusText(order.status) }}
                         </span>
-                        <p class="text-lg font-bold text-gray-900 mt-1">{{ order.total | currency:'BRL':'symbol':'1.2-2' }}</p>
+                        <p class="text-lg font-bold text-neutral-900 mt-1">{{ order.total | currency:'BRL':'symbol':'1.2-2' }}</p>
                       </div>
                     </div>
                   </div>
 
                   <!-- Order Progress -->
                   <div class="px-6 py-4">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-between mb-4 overflow-x-auto">
                       @for (step of orderSteps; track step.id) {
-                        <div class="flex flex-col items-center flex-1">
+                        <div class="flex flex-col items-center flex-1 min-w-0">
                           <div 
                             [class]="getStepClass(step.id, order.currentStep)"
-                            class="w-8 h-8 rounded-full flex items-center justify-center mb-2">
+                            class="w-8 h-8 rounded-full flex items-center justify-center mb-2 flex-shrink-0">
                             @if (step.id < order.currentStep) {
                               <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -81,12 +81,12 @@ import { CommonModule } from '@angular/common';
                               <span class="text-sm font-medium">{{ step.id }}</span>
                             }
                           </div>
-                          <span class="text-xs text-center text-gray-600">{{ step.label }}</span>
+                          <span class="text-xs text-center text-neutral-600 px-1">{{ step.label }}</span>
                         </div>
                         @if (step.id < orderSteps.length) {
                           <div 
-                            [class]="step.id < order.currentStep ? 'bg-green-500' : 'bg-gray-300'"
-                            class="flex-1 h-1 mx-2">
+                            [class]="step.id < order.currentStep ? 'bg-brand-olive' : 'bg-neutral-300'"
+                            class="flex-1 h-1 mx-2 min-w-4">
                           </div>
                         }
                       }
@@ -94,29 +94,29 @@ import { CommonModule } from '@angular/common';
                   </div>
 
                   <!-- Order Items -->
-                  <div class="px-6 py-4 border-t border-gray-200">
-                    <h4 class="font-medium text-gray-900 mb-3">Itens do pedido</h4>
+                  <div class="px-6 py-4 border-t border-neutral-200">
+                    <h4 class="font-medium text-neutral-900 mb-3">Itens do pedido</h4>
                     <div class="space-y-2">
                       @for (item of order.items; track item.id) {
                         <div class="flex items-center justify-between">
                           <div class="flex items-center">
-                            <span class="text-sm text-gray-600 w-8">{{ item.quantity }}x</span>
-                            <span class="text-sm text-gray-900">{{ item.name }}</span>
+                            <span class="text-sm text-neutral-600 w-8 flex-shrink-0">{{ item.quantity }}x</span>
+                            <span class="text-sm text-neutral-900">{{ item.name }}</span>
                           </div>
-                          <span class="text-sm font-medium text-gray-900">{{ item.price | currency:'BRL':'symbol':'1.2-2' }}</span>
+                          <span class="text-sm font-medium text-neutral-900 flex-shrink-0">{{ item.price | currency:'BRL':'symbol':'1.2-2' }}</span>
                         </div>
                       }
                     </div>
                   </div>
 
                   <!-- Actions -->
-                  <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                    <div class="flex justify-between items-center">
-                      <button class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                  <div class="px-6 py-4 bg-neutral-50 border-t border-neutral-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                      <button class="text-brand-red hover:text-red-600 text-sm font-medium transition-colors">
                         Rastrear Pedido
                       </button>
                       @if (order.status === 'delivered') {
-                        <button class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors">
+                        <button class="bg-brand-red text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors w-full sm:w-auto">
                           Pedir Novamente
                         </button>
                       }
@@ -133,24 +133,24 @@ import { CommonModule } from '@angular/common';
           <div class="space-y-4">
             @if (orderHistory.length === 0) {
               <div class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 text-neutral-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                         d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum pedido anterior</h3>
-                <p class="text-gray-600">Você ainda não fez nenhum pedido.</p>
+                <h3 class="text-lg font-medium text-neutral-900 mb-2">Nenhum pedido anterior</h3>
+                <p class="text-neutral-600">Você ainda não fez nenhum pedido.</p>
               </div>
             } @else {
               @for (order of orderHistory; track order.id) {
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div class="flex items-center justify-between mb-4">
+                <div class="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
                     <div>
-                      <h3 class="text-lg font-semibold text-gray-900">Pedido #{{ order.id }}</h3>
-                      <p class="text-sm text-gray-600">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</p>
+                      <h3 class="text-lg font-semibold text-neutral-900">Pedido #{{ order.id }}</h3>
+                      <p class="text-sm text-neutral-600">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</p>
                     </div>
-                    <div class="text-right">
-                      <span class="text-lg font-bold text-gray-900">{{ order.total | currency:'BRL':'symbol':'1.2-2' }}</span>
-                      <p class="text-sm text-green-600">Entregue</p>
+                    <div class="text-left sm:text-right">
+                      <span class="text-lg font-bold text-neutral-900">{{ order.total | currency:'BRL':'symbol':'1.2-2' }}</span>
+                      <p class="text-sm text-brand-olive">Entregue</p>
                     </div>
                   </div>
                   
@@ -158,19 +158,19 @@ import { CommonModule } from '@angular/common';
                     @for (item of order.items; track item.id) {
                       <div class="flex items-center justify-between text-sm">
                         <div class="flex items-center">
-                          <span class="text-gray-600 w-8">{{ item.quantity }}x</span>
-                          <span class="text-gray-900">{{ item.name }}</span>
+                          <span class="text-neutral-600 w-8 flex-shrink-0">{{ item.quantity }}x</span>
+                          <span class="text-neutral-900">{{ item.name }}</span>
                         </div>
-                        <span class="font-medium text-gray-900">{{ item.price | currency:'BRL':'symbol':'1.2-2' }}</span>
+                        <span class="font-medium text-neutral-900 flex-shrink-0">{{ item.price | currency:'BRL':'symbol':'1.2-2' }}</span>
                       </div>
                     }
                   </div>
 
-                  <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                    <button class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 border-t border-neutral-200 gap-3">
+                    <button class="text-brand-red hover:text-red-600 text-sm font-medium transition-colors">
                       Ver Detalhes
                     </button>
-                    <button class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors">
+                    <button class="bg-brand-red text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors w-full sm:w-auto">
                       Pedir Novamente
                     </button>
                   </div>
@@ -250,11 +250,11 @@ export class OrdersComponent {
 
   getStepClass(stepId: number, currentStep: number): string {
     if (stepId < currentStep) {
-      return 'bg-green-500 text-white';
+      return 'bg-brand-olive text-white';
     } else if (stepId === currentStep) {
-      return 'bg-orange-600 text-white';
+      return 'bg-brand-red text-white';
     } else {
-      return 'bg-gray-300 text-gray-600';
+      return 'bg-neutral-300 text-neutral-600';
     }
   }
 }

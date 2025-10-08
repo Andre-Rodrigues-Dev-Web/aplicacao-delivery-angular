@@ -25,15 +25,15 @@ import { CardConfig } from '../../types/ui.types';
   `,
   styles: [`
     .card-header {
-      @apply border-b border-gray-200 pb-4 mb-4;
+      @apply border-b border-neutral-200 pb-4 mb-4;
     }
     
     .card-title {
-      @apply text-lg font-semibold text-gray-900 m-0;
+      @apply text-lg font-semibold text-neutral-900 m-0;
     }
     
     .card-subtitle {
-      @apply text-sm text-gray-600 mt-1 m-0;
+      @apply text-sm text-neutral-600 mt-1 m-0;
     }
     
     .card-content {
@@ -41,7 +41,7 @@ import { CardConfig } from '../../types/ui.types';
     }
     
     .card-footer {
-      @apply border-t border-gray-200 pt-4 mt-4;
+      @apply border-t border-neutral-200 pt-4 mt-4;
     }
   `]
 })
@@ -54,40 +54,28 @@ export class CardComponent {
   @Input() hasFooter = false;
 
   get cardClasses(): string {
-    const baseClasses = [
-      'bg-white',
-      'rounded-xl',
-      'transition-all',
-      'duration-200'
-    ];
-
-    // Variant classes
+    const baseClasses = 'bg-white rounded-lg transition-shadow';
+    
     const variantClasses = {
-      default: ['shadow-sm'],
-      elevated: ['shadow-lg'],
-      outlined: ['border', 'border-gray-200', 'shadow-none']
+      default: 'border border-neutral-200',
+      elevated: 'shadow-md hover:shadow-lg',
+      outlined: 'border-2 border-neutral-300'
     };
-
-    // Padding classes
+    
     const paddingClasses = {
-      none: [],
-      sm: ['p-4'],
-      md: ['p-6'],
-      lg: ['p-8']
+      none: '',
+      sm: 'p-4',
+      md: 'p-6',
+      lg: 'p-8'
     };
-
-    // Hoverable classes
-    const hoverClasses = this.hoverable ? [
-      'hover:shadow-lg',
-      'hover:-translate-y-1',
-      'cursor-pointer'
-    ] : [];
-
+    
+    const hoverClass = this.hoverable ? 'hover:shadow-lg cursor-pointer' : '';
+    
     return [
-      ...baseClasses,
-      ...variantClasses[this.variant],
-      ...paddingClasses[this.padding],
-      ...hoverClasses
-    ].join(' ');
+      baseClasses,
+      variantClasses[this.variant],
+      paddingClasses[this.padding],
+      hoverClass
+    ].filter(Boolean).join(' ');
   }
 }

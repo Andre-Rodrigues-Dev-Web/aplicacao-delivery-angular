@@ -110,7 +110,7 @@ import { BadgeComponent } from '../badge/badge.component';
   `,
   styles: [`
     .product-card {
-      @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-1;
+      @apply bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg;
     }
     
     .product-card.unavailable {
@@ -118,19 +118,19 @@ import { BadgeComponent } from '../badge/badge.component';
     }
     
     .product-image-container {
-      @apply relative aspect-video overflow-hidden;
+      @apply relative h-48 overflow-hidden;
     }
     
     .product-image {
-      @apply w-full h-full object-cover transition-transform duration-200 hover:scale-105;
+      @apply w-full h-full object-cover transition-transform duration-300 group-hover:scale-105;
     }
     
     .discount-badge {
-      @apply absolute top-2 right-2;
+      @apply absolute top-2 left-2;
     }
     
     .unavailable-overlay {
-      @apply absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center;
+      @apply absolute inset-0 bg-neutral-900 bg-opacity-50 flex items-center justify-center;
     }
     
     .unavailable-text {
@@ -138,47 +138,43 @@ import { BadgeComponent } from '../badge/badge.component';
     }
     
     .product-content {
-      @apply p-4 space-y-3;
+      @apply p-4;
     }
     
     .product-category {
-      @apply text-xs font-medium text-gray-500 uppercase tracking-wide;
+      @apply text-xs text-neutral-500 uppercase tracking-wide font-medium mb-1;
     }
     
     .product-name {
-      @apply text-lg font-semibold text-gray-900 line-clamp-2 m-0;
+      @apply text-lg font-semibold text-neutral-900 mb-2 line-clamp-1;
     }
     
     .product-description {
-      @apply text-sm text-gray-600 line-clamp-2 m-0;
+      @apply text-sm text-neutral-600 mb-3 line-clamp-2;
     }
     
     .product-tags {
-      @apply flex flex-wrap gap-1;
+      @apply flex flex-wrap gap-1 mb-3;
     }
     
     .product-tag {
-      @apply inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full;
+      @apply px-2 py-1 bg-neutral-100 text-neutral-700 text-xs rounded-md;
     }
     
-    .product-rating {
-      @apply flex items-center gap-2;
+    .product-meta {
+      @apply flex items-center justify-between mb-3 text-xs text-neutral-500;
     }
     
-    .stars {
-      @apply flex;
+    .rating-container {
+      @apply flex items-center gap-1;
     }
     
-    .star {
-      @apply text-gray-300 text-sm;
-    }
-    
-    .star.filled {
+    .rating-star {
       @apply text-yellow-400;
     }
     
     .rating-text {
-      @apply text-xs text-gray-500;
+      @apply text-xs text-neutral-500;
     }
     
     .product-price {
@@ -186,11 +182,11 @@ import { BadgeComponent } from '../badge/badge.component';
     }
     
     .original-price {
-      @apply text-sm text-gray-500 line-through;
+      @apply text-sm text-neutral-500 line-through;
     }
     
     .current-price {
-      @apply text-lg font-bold text-primary-600;
+      @apply text-lg font-bold text-brand-red;
     }
     
     .product-actions {
@@ -202,6 +198,13 @@ import { BadgeComponent } from '../badge/badge.component';
     }
     
     /* Utility classes */
+    .line-clamp-1 {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;

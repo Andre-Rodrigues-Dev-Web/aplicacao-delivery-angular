@@ -245,6 +245,46 @@ export class AuthService {
             refreshToken: 'mock-refresh-token',
             expiresIn: 3600
           });
+        } else if (credentials.email === 'andrelaurentinomg@gmail.com' && credentials.password === 'Andre1993@') {
+          const mockUser: User = {
+            id: '2',
+            email: credentials.email,
+            name: 'andre',
+            phone: '+55 11 98765-4321',
+            role: UserRole.CUSTOMER,
+            isActive: true,
+            isEmailVerified: true,
+            isPhoneVerified: true,
+            addresses: [],
+            preferences: {
+              notifications: {
+                email: true,
+                sms: true,
+                push: true,
+                orderUpdates: true,
+                promotions: true,
+                newsletter: true
+              },
+              delivery: {},
+              payment: {},
+              dietary: {
+                vegetarian: false,
+                vegan: false,
+                glutenFree: false,
+                lactoseFree: false,
+                allergies: []
+              }
+            },
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+
+          observer.next({
+            user: mockUser,
+            accessToken: 'mock-access-token-andre',
+            refreshToken: 'mock-refresh-token-andre',
+            expiresIn: 3600
+          });
         } else {
           observer.error(new Error('Credenciais inválidas'));
         }
