@@ -251,7 +251,7 @@ export class AuthService {
             email: credentials.email,
             name: 'andre',
             phone: '+55 11 98765-4321',
-            role: UserRole.CUSTOMER,
+            role: UserRole.ADMIN,
             isActive: true,
             isEmailVerified: true,
             isPhoneVerified: true,
